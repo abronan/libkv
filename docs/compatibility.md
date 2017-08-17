@@ -38,10 +38,10 @@ When initializing the `WatchTree`, the natural way to do so is through the follo
 
 ```go
 key := "path/to/key"
-if !kv.Exists(key) {
+if !kv.Exists(key, nil) {
     err := kv.Put(key, []byte("data"), nil)
 }
-events, err := kv.WatchTree(key, nil)
+events, err := kv.WatchTree(key, nil, nil)
 ```
 
 The code above will not work across backends and etcd will fail on the `WatchTree` call. What happens exactly:
@@ -54,11 +54,11 @@ To be cross-compatible between those three backends for `WatchTree`, we need to 
 
 ```go
 key := "path/to/key"
-if !kv.Exists(key) {
+if !kv.Exists(key, nil) {
     // We enforce IsDir = true to make sure etcd creates a directory
     err := kv.Put(key, []byte("data"), &store.WriteOptions{IsDir:true})
 }
-events, err := kv.WatchTree(key, nil)
+events, err := kv.WatchTree(key, nil, nil)
 ```
 
 The code above will work for the three backends but make sure to not try to store any value at that path as the call to `Put` will fail for `etcd` (you can only put at `path/to/key/foo`, `path/to/key/bar` for example).

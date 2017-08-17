@@ -48,7 +48,7 @@ func main() {
         fmt.Errorf("Error trying to put value at key: %v", key)
     }
 
-    pair, err := kv.Get(key)
+    pair, err := kv.Get(key, nil)
     if err != nil {
         fmt.Errorf("Error trying accessing value at key: %v", key)
     }
@@ -66,7 +66,7 @@ func main() {
 
 ```go
 // List will list all the keys under `key` if it contains a set of child keys/values
-entries, err := kv.List(key)
+entries, err := kv.List(key, nil)
 for _, pair := range entries {
     fmt.Printf("key=%v - value=%v", pair.Key, string(pair.Value))
 }
@@ -79,7 +79,7 @@ You can use watches to watch modifications on a key. First you need to check if 
 
 ```go
 // Checking on the key before watching
-if !kv.Exists(key) {
+if !kv.Exists(key, nil) {
     err := kv.Put(key, []byte("bar"), nil)
     if err != nil {
         fmt.Errorf("Something went wrong when initializing key %v", key)
@@ -87,7 +87,7 @@ if !kv.Exists(key) {
 }
 
 stopCh := make(<-chan struct{})
-events, err := kv.Watch(key, stopCh)
+events, err := kv.Watch(key, stopCh, nil)
 
 select {
     case pair := <-events:
@@ -103,7 +103,7 @@ You can use watches to watch modifications on a key. First you need to check if 
 
 ```go
 // Checking on the key before watching
-if !kv.Exists(key) {
+if !kv.Exists(key, nil) {
     // Don't forget IsDir:true if the code is used cross-backend
     err := kv.Put(key, []byte("bar"), &store.WriteOptions{IsDir:true})
     if err != nil {
@@ -112,7 +112,7 @@ if !kv.Exists(key) {
 }
 
 stopCh := make(<-chan struct{})
-events, err := kv.WatchTree(key, stopCh)
+events, err := kv.WatchTree(key, stopCh, nil)
 
 select {
     case pairs := <-events:
@@ -144,7 +144,7 @@ if err != nil {
 }
 
 // Get should work because we are holding the key
-pair, err := kv.Get(key)
+pair, err := kv.Get(key, nil)
 if err != nil {
     fmt.Errorf("key %v has value %v", key, pair.Value)
 }
