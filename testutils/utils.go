@@ -62,7 +62,7 @@ func checkPairNotNil(t *testing.T, pair *store.KVPair) {
 
 func testPutGetDeleteExists(t *testing.T, kv store.Store) {
 	// Get a not exist key should return ErrKeyNotFound
-	pair, err := kv.Get("testPutGetDelete_not_exist_key")
+	pair, err := kv.Get("testPutGetDelete_not_exist_key", nil)
 	assert.Equal(t, store.ErrKeyNotFound, err)
 
 	value := []byte("bar")
@@ -78,14 +78,14 @@ func testPutGetDeleteExists(t *testing.T, kv store.Store) {
 		assert.NoError(t, err)
 
 		// Get should return the value and an incremented index
-		pair, err = kv.Get(key)
+		pair, err = kv.Get(key, nil)
 		assert.NoError(t, err)
 		checkPairNotNil(t, pair)
 		assert.Equal(t, pair.Value, value)
 		assert.NotEqual(t, pair.LastIndex, 0)
 
 		// Exists should return true
-		exists, err := kv.Exists(key)
+		exists, err := kv.Exists(key, nil)
 		assert.NoError(t, err)
 		assert.True(t, exists)
 
@@ -94,6 +94,7 @@ func testPutGetDeleteExists(t *testing.T, kv store.Store) {
 		assert.NoError(t, err)
 
 		// Get should fail
+<<<<<<< HEAD
 		pair, err = kv.Get(key)
 		assert.Error(t, err)
 		assert.Nil(t, pair)
@@ -103,6 +104,16 @@ func testPutGetDeleteExists(t *testing.T, kv store.Store) {
 		exists, err = kv.Exists(key)
 		assert.NoError(t, err)
 		assert.False(t, exists)
+=======
+		pair, err = kv.Get(key, nil)
+		assert.Error(t, err, failMsg)
+		assert.Nil(t, pair, failMsg)
+
+		// Exists should return false
+		exists, err = kv.Exists(key, nil)
+		assert.NoError(t, err, failMsg)
+		assert.False(t, exists, failMsg)
+>>>>>>> add read options
 	}
 }
 
@@ -116,7 +127,7 @@ func testWatch(t *testing.T, kv store.Store) {
 	assert.NoError(t, err)
 
 	stopCh := make(<-chan struct{})
-	events, err := kv.Watch(key, stopCh)
+	events, err := kv.Watch(key, stopCh, nil)
 	assert.NoError(t, err)
 	assert.NotNil(t, events)
 
@@ -183,7 +194,7 @@ func testWatchTree(t *testing.T, kv store.Store) {
 	assert.NoError(t, err)
 
 	stopCh := make(<-chan struct{})
-	events, err := kv.WatchTree(dir, stopCh)
+	events, err := kv.WatchTree(dir, stopCh, nil)
 	assert.NoError(t, err)
 	assert.NotNil(t, events)
 
@@ -228,7 +239,7 @@ func testAtomicPut(t *testing.T, kv store.Store) {
 	assert.NoError(t, err)
 
 	// Get should return the value and an incremented index
-	pair, err := kv.Get(key)
+	pair, err := kv.Get(key, nil)
 	assert.NoError(t, err)
 	checkPairNotNil(t, pair)
 	assert.Equal(t, pair.Value, value)
@@ -263,7 +274,7 @@ func testAtomicPutCreate(t *testing.T, kv store.Store) {
 	assert.True(t, success)
 
 	// Get should return the value and an incremented index
-	pair, err := kv.Get(key)
+	pair, err := kv.Get(key, nil)
 	assert.NoError(t, err)
 	checkPairNotNil(t, pair)
 	assert.Equal(t, pair.Value, value)
@@ -295,7 +306,7 @@ func testAtomicDelete(t *testing.T, kv store.Store) {
 	assert.NoError(t, err)
 
 	// Get should return the value and an incremented index
-	pair, err := kv.Get(key)
+	pair, err := kv.Get(key, nil)
 	assert.NoError(t, err)
 	checkPairNotNil(t, pair)
 	assert.Equal(t, pair.Value, value)
@@ -336,7 +347,7 @@ func testLockUnlock(t *testing.T, kv store.Store) {
 	assert.NotNil(t, lockChan)
 
 	// Get should work
-	pair, err := kv.Get(key)
+	pair, err := kv.Get(key, nil)
 	assert.NoError(t, err)
 	checkPairNotNil(t, pair)
 	assert.Equal(t, pair.Value, value)
@@ -352,7 +363,7 @@ func testLockUnlock(t *testing.T, kv store.Store) {
 	assert.NotNil(t, lockChan)
 
 	// Get should work
-	pair, err = kv.Get(key)
+	pair, err = kv.Get(key, nil)
 	assert.NoError(t, err)
 	checkPairNotNil(t, pair)
 	assert.Equal(t, pair.Value, value)
@@ -383,7 +394,7 @@ func testLockTTL(t *testing.T, kv store.Store, otherConn store.Store) {
 	assert.NotNil(t, lockChan)
 
 	// Get should work
-	pair, err := otherConn.Get(key)
+	pair, err := otherConn.Get(key, nil)
 	assert.NoError(t, err)
 	checkPairNotNil(t, pair)
 	assert.Equal(t, pair.Value, value)
@@ -449,7 +460,7 @@ func testLockTTL(t *testing.T, kv store.Store, otherConn store.Store) {
 	}
 
 	// Get should work with the new value
-	pair, err = kv.Get(key)
+	pair, err = kv.Get(key, nil)
 	assert.NoError(t, err)
 	checkPairNotNil(t, pair)
 	assert.Equal(t, pair.Value, value)
@@ -475,12 +486,12 @@ func testPutTTL(t *testing.T, kv store.Store, otherConn store.Store) {
 	assert.NoError(t, err)
 
 	// Get on firstKey should work
-	pair, err := kv.Get(firstKey)
+	pair, err := kv.Get(firstKey, nil)
 	assert.NoError(t, err)
 	checkPairNotNil(t, pair)
 
 	// Get on secondKey should work
-	pair, err = kv.Get(secondKey)
+	pair, err = kv.Get(secondKey, nil)
 	assert.NoError(t, err)
 	checkPairNotNil(t, pair)
 
@@ -491,12 +502,12 @@ func testPutTTL(t *testing.T, kv store.Store, otherConn store.Store) {
 	time.Sleep(3 * time.Second)
 
 	// Get on firstKey shouldn't work
-	pair, err = kv.Get(firstKey)
+	pair, err = kv.Get(firstKey, nil)
 	assert.Error(t, err)
 	assert.Nil(t, pair)
 
 	// Get on secondKey shouldn't work
-	pair, err = kv.Get(secondKey)
+	pair, err = kv.Get(secondKey, nil)
 	assert.Error(t, err)
 	assert.Nil(t, pair)
 }
@@ -520,7 +531,7 @@ func testList(t *testing.T, kv store.Store) {
 
 	// List should work and return the two correct values
 	for _, parent := range []string{prefix, prefix + "/"} {
-		pairs, err := kv.List(parent)
+		pairs, err := kv.List(parent, nil)
 		assert.NoError(t, err)
 		if assert.NotNil(t, pairs) {
 			assert.Equal(t, len(pairs), 2)
@@ -538,7 +549,7 @@ func testList(t *testing.T, kv store.Store) {
 	}
 
 	// List should fail: the key does not exist
-	pairs, err := kv.List("idontexist")
+	pairs, err := kv.List("idontexist", nil)
 	assert.Equal(t, store.ErrKeyNotFound, err)
 	assert.Nil(t, pairs)
 }
@@ -561,14 +572,14 @@ func testDeleteTree(t *testing.T, kv store.Store) {
 	assert.NoError(t, err)
 
 	// Get should work on the first Key
-	pair, err := kv.Get(firstKey)
+	pair, err := kv.Get(firstKey, nil)
 	assert.NoError(t, err)
 	checkPairNotNil(t, pair)
 	assert.Equal(t, pair.Value, firstValue)
 	assert.NotEqual(t, pair.LastIndex, 0)
 
 	// Get should work on the second Key
-	pair, err = kv.Get(secondKey)
+	pair, err = kv.Get(secondKey, nil)
 	assert.NoError(t, err)
 	checkPairNotNil(t, pair)
 	assert.Equal(t, pair.Value, secondValue)
@@ -579,11 +590,11 @@ func testDeleteTree(t *testing.T, kv store.Store) {
 	assert.NoError(t, err)
 
 	// Get should fail on both keys
-	pair, err = kv.Get(firstKey)
+	pair, err = kv.Get(firstKey, nil)
 	assert.Error(t, err)
 	assert.Nil(t, pair)
 
-	pair, err = kv.Get(secondKey)
+	pair, err = kv.Get(secondKey, nil)
 	assert.Error(t, err)
 	assert.Nil(t, pair)
 }
