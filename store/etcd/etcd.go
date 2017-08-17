@@ -151,9 +151,7 @@ func keyNotFound(err error) bool {
 // Get the value at "key", returns the last modified
 // index to use in conjunction to Atomic calls
 func (s *Etcd) Get(key string) (pair *store.KVPair, err error) {
-	getOpts := &etcd.GetOptions{
-		Quorum: true,
-	}
+	getOpts := &etcd.GetOptions{}
 
 	result, err := s.client.Get(context.Background(), s.normalize(key), getOpts)
 	if err != nil {
@@ -398,9 +396,7 @@ func (s *Etcd) AtomicDelete(key string, previous *store.KVPair) (bool, error) {
 // List child nodes of a given directory
 func (s *Etcd) List(directory string) ([]*store.KVPair, error) {
 	getOpts := &etcd.GetOptions{
-		Quorum:    true,
 		Recursive: true,
-		Sort:      true,
 	}
 
 	resp, err := s.client.Get(context.Background(), s.normalize(directory), getOpts)
