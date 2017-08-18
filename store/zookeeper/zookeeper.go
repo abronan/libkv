@@ -209,7 +209,7 @@ func (s *Zookeeper) WatchTree(directory string, stopCh <-chan struct{}, opts *st
 				return
 			}
 			if fireEvt {
-				kvs, err := s.getKVPairs(directory, keys)
+				kvs, err := s.getKVPairs(directory, keys, opts)
 				if err != nil {
 					// Failed to get values for one or more of the keys,
 					// the list may be out of date so try again.
@@ -243,11 +243,11 @@ func (s *Zookeeper) List(directory string, opts *store.ReadOptions) ([]*store.KV
 		return nil, err
 	}
 
-	kvs, err := s.getKVPairs(directory, keys)
+	kvs, err := s.getKVPairs(directory, keys, opts)
 	if err != nil {
 		// If node is not found: List is out of date, retry
 		if err == store.ErrKeyNotFound {
-			return s.List(directory)
+			return s.List(directory, opts)
 		}
 		return nil, err
 	}
@@ -257,7 +257,7 @@ func (s *Zookeeper) List(directory string, opts *store.ReadOptions) ([]*store.KV
 
 // DeleteTree deletes a range of keys under a given directory
 func (s *Zookeeper) DeleteTree(directory string) error {
-	pairs, err := s.List(directory)
+	pairs, err := s.List(directory, nil)
 	if err != nil {
 		return err
 	}
@@ -510,11 +510,11 @@ func (s *Zookeeper) getW(key string) ([]byte, *zk.Stat, <-chan zk.Event, error) 
 	return resp, meta, ech, nil
 }
 
-func (s *Zookeeper) getKVPairs(directory string, keys []string) ([]*store.KVPair, error) {
+func (s *Zookeeper) getKVPairs(directory string, keys []string, opts *store.ReadOptions) ([]*store.KVPair, error) {
 	kvs := []*store.KVPair{}
 
 	for _, key := range keys {
-		pair, err := s.Get(strings.TrimSuffix(directory, "/") + s.normalize(key))
+		pair, err := s.Get(strings.TrimSuffix(directory, "/") + s.normalize(key), opts)
 		if err != nil {
 			return nil, err
 		}
