@@ -353,7 +353,7 @@ func (l *redisLock) Lock(stopCh chan struct{}) (<-chan struct{}, error) {
 	}
 
 	// wait for changes on the key
-	watch, err := l.redis.Watch(l.key, stopCh)
+	watch, err := l.redis.Watch(l.key, stopCh, nil)
 	if err != nil {
 		return nil, err
 	}
