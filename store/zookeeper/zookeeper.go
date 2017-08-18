@@ -514,7 +514,7 @@ func (s *Zookeeper) getKVPairs(directory string, keys []string, opts *store.Read
 	kvs := []*store.KVPair{}
 
 	for _, key := range keys {
-		pair, err := s.Get(strings.TrimSuffix(directory, "/") + s.normalize(key), opts)
+		pair, err := s.Get(strings.TrimSuffix(directory, "/")+s.normalize(key), opts)
 		if err != nil {
 			return nil, err
 		}
