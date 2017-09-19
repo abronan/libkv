@@ -286,7 +286,6 @@ func (b *BoltDB) List(keyPrefix string) ([]*store.KVPair, error) {
 		prefix := []byte(keyPrefix)
 
 		for key, v := cursor.Seek(prefix); bytes.HasPrefix(key, prefix); key, v = cursor.Next() {
-
 			dbIndex := binary.LittleEndian.Uint64(v[:libkvmetadatalen])
 			v = v[libkvmetadatalen:]
 			val := make([]byte, len(v))
@@ -302,6 +301,8 @@ func (b *BoltDB) List(keyPrefix string) ([]*store.KVPair, error) {
 	})
 	if len(kv) == 0 {
 		return nil, store.ErrKeyNotFound
+	} else if len(kv) == 1 && kv[0].Key == keyPrefix {
+		return []*store.KVPair{}, err
 	}
 	return kv, err
 }

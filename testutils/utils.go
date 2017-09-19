@@ -523,20 +523,27 @@ func testList(t *testing.T, kv store.Store) {
 		pairs, err := kv.List(parent)
 		assert.NoError(t, err)
 		if assert.NotNil(t, pairs) {
-			assert.Equal(t, len(pairs), 2)
+			assert.Equal(t, 2, len(pairs))
 		}
 
 		// Check pairs, those are not necessarily in Put order
 		for _, pair := range pairs {
 			if pair.Key == firstKey {
-				assert.Equal(t, pair.Value, firstValue)
+				assert.Equal(t, firstValue, pair.Value)
 			}
 			if pair.Key == secondKey {
-				assert.Equal(t, pair.Value, secondValue)
+				assert.Equal(t, secondValue, pair.Value)
 			}
 		}
 	}
-
+	// List should work and return 0 value
+	for _, key := range []string{firstKey, secondKey} {
+		pairs, err := kv.List(key)
+		assert.NoError(t, err)
+		if assert.NotNil(t, pairs) {
+			assert.Equal(t, 0, len(pairs))
+		}
+	}
 	// List should fail: the key does not exist
 	pairs, err := kv.List("idontexist")
 	assert.Equal(t, store.ErrKeyNotFound, err)
