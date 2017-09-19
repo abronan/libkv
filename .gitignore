@@ -1,1 +1,4 @@
 dump.rdb
+.idea/
+Gopkg.lock
+vendor/

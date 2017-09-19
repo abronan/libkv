@@ -12,6 +12,7 @@ before_install:
   - go get github.com/mattn/goveralls
   - go get github.com/golang/lint/golint
   - go get github.com/GeertJohan/fgt
+  - go get -u github.com/golang/dep/cmd/dep
   # ca-certificates is needed for wget to work properly
   - sudo apt-get install ca-certificates
 
@@ -26,6 +27,7 @@ script:
   - ./etcd/etcd --listen-client-urls 'http://0.0.0.0:4001' --advertise-client-urls 'http://127.0.0.1:4001' >/dev/null 2>&1 &
   - ./zk/bin/zkServer.sh start ./zk/conf/zoo.cfg 1> /dev/null
   - ./redis/src/redis-server &
+  - dep ensure --update
   - script/validate-gofmt
   - go vet ./...
   - fgt golint ./...
