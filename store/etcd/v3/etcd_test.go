@@ -56,3 +56,20 @@ func TestEtcdV3Store(t *testing.T) {
 	testutils.RunTestTTL(t, kv, ttlKV)
 	testutils.RunCleanup(t, kv)
 }
+
+func TestEtcdListLockKey(t *testing.T) {
+	key := "testLockUnlock"
+	lockKV := makeEtcdV3Client(t)
+	value := []byte("bar")
+
+	// We should be able to create a new lock on key
+	lock, err := lockKV.NewLock(key, &store.LockOptions{Value: value, TTL: 2 * time.Second})
+	assert.NoError(t, err)
+	assert.NotNil(t, lock)
+
+	pairs, err := lockKV.List(key)
+	assert.NoError(t, err)
+	assert.NotNil(t, pairs)
+	assert.Equal(t, 1, len(pairs))
+	assert.Equal(t, key, pairs[0].Key)
+}

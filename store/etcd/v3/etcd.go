@@ -21,7 +21,9 @@ const (
 // EtcdV3 is the receiver type for the
 // Store interface
 type EtcdV3 struct {
-	client *etcd.Client
+	client   *etcd.Client
+	mutexKey string // mutexKey is the key to write appended with a "_lock" suffix
+	writeKey string // writeKey is the actual key to update protected by the mutexKey
 }
 
 type etcdLock struct {
@@ -425,6 +427,7 @@ func (s *EtcdV3) NewLock(key string, options *store.LockOptions) (lock store.Loc
 	// composed of the key to protect with a lock: "/key", and a side key that
 	// acts as the lock: "/key_lock"
 	mutexKey := s.normalize(key + "_lock")
+	writeKey := s.normalize(key)
 
 	// Create lock object
 	lock = &etcdLock{
@@ -432,10 +435,13 @@ func (s *EtcdV3) NewLock(key string, options *store.LockOptions) (lock store.Loc
 		mutex:    concurrency.NewMutex(session, mutexKey),
 		session:  session,
 		mutexKey: mutexKey,
-		writeKey: s.normalize(key),
+		writeKey: writeKey,
 		value:    value,
 		ttl:      ttl,
 	}
+
+	s.mutexKey = mutexKey
+	s.writeKey = writeKey
 
 	return lock, nil
 }
@@ -498,6 +504,10 @@ func (s *EtcdV3) list(directory string) (int64, []*store.KVPair, error) {
 	kv := []*store.KVPair{}
 
 	for _, n := range resp.Kvs {
+		// Allow to filter the _lock entry when the mutex key directory is given
+		if directory == s.writeKey && string(n.Key) == s.mutexKey {
+			continue
+		}
 		kv = append(kv, &store.KVPair{
 			Key:       string(n.Key),
 			Value:     []byte(n.Value),
