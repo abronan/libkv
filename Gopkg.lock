@@ -26,12 +26,6 @@
   version = "v1.1.0"
 
 [[projects]]
-  name = "github.com/docker/libkv"
-  packages = [".","store","testutils"]
-  revision = "aabc039ad04deb721e234f99cd1b4aa28ac71a40"
-  version = "v0.2.1"
-
-[[projects]]
   branch = "master"
   name = "github.com/golang/protobuf"
   packages = ["proto","ptypes","ptypes/any","ptypes/duration","ptypes/timestamp"]
@@ -135,6 +129,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "3e7152065d14d3c75fd55d88cbb544a58d33b23966705605e092060c57bee40e"
+  inputs-digest = "e9f45a7ddcc405f52f830840fd7269ed476b0f754c401f01c7bd730c8167549d"
   solver-name = "gps-cdcl"
   solver-version = 1

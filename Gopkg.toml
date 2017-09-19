@@ -20,6 +20,7 @@
 #  name = "github.com/x/y"
 #  version = "2.4.0"
 
+ignored = ["github.com/docker/libkv", "github.com/docker/libkv/store", "github.com/docker/libkv/testutils"]
 
 [[constraint]]
   name = "github.com/boltdb/bolt"
@@ -28,10 +29,6 @@
 [[constraint]]
   name = "github.com/coreos/etcd"
   version = "3.2.7"
-
-[[constraint]]
-  name = "github.com/docker/libkv"
-  version = "0.2.1"
 
 [[constraint]]
   name = "github.com/hashicorp/consul"
