@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	client = "localhost:4001"
+	client = "localhost:2379"
 )
 
 func makeEtcdV3Client(t *testing.T) store.Store {
@@ -58,14 +58,20 @@ func TestEtcdV3Store(t *testing.T) {
 }
 
 func TestEtcdListLockKey(t *testing.T) {
-	key := "testLockUnlock"
 	lockKV := makeEtcdV3Client(t)
+
+	key := "testLocketcdv3"
 	value := []byte("bar")
 
 	// We should be able to create a new lock on key
 	lock, err := lockKV.NewLock(key, &store.LockOptions{Value: value, TTL: 2 * time.Second})
 	assert.NoError(t, err)
 	assert.NotNil(t, lock)
+
+	// Lock should successfully succeed or block
+	lockChan, err := lock.Lock(nil)
+	assert.NoError(t, err)
+	assert.NotNil(t, lockChan)
 
 	pairs, err := lockKV.List(key)
 	assert.NoError(t, err)

@@ -420,10 +420,6 @@ func (s *Etcd) List(directory string) ([]*store.KVPair, error) {
 
 	kv := []*store.KVPair{}
 	for _, n := range resp.Node.Nodes {
-		// Allow to filter the _lock entry when the mutex key directory is given
-		if directory == s.writeKey && string(n.Key) == s.mutexKey {
-			continue
-		}
 		kv = append(kv, &store.KVPair{
 			Key:       n.Key,
 			Value:     []byte(n.Value),

@@ -505,7 +505,7 @@ func (s *EtcdV3) list(directory string) (int64, []*store.KVPair, error) {
 
 	for _, n := range resp.Kvs {
 		// Allow to filter the _lock entry when the mutex key directory is given
-		if directory == s.writeKey && string(n.Key) == s.mutexKey {
+		if directory == s.writeKey && strings.Split(string(n.Key), "/")[0] == s.mutexKey {
 			continue
 		}
 		kv = append(kv, &store.KVPair{
