@@ -32,7 +32,7 @@ script:
   - ./redis/src/redis-server &
   - script/validate-gofmt
   - go vet ./...
-  - fgt golint libkv store testutils
+  - fgt golint . store testutils
   - go test -v -race ./...
   - script/coverage
   - goveralls -service=travis-ci -coverprofile=goverage.report
