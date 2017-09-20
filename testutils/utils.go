@@ -79,6 +79,7 @@ func testPutGetDeleteExists(t *testing.T, kv store.Store) {
 
 		// Get should return the value and an incremented index
 		pair, err = kv.Get(key, nil)
+<<<<<<< HEAD
 		assert.NoError(t, err)
 		checkPairNotNil(t, pair)
 		assert.Equal(t, pair.Value, value)
@@ -88,6 +89,19 @@ func testPutGetDeleteExists(t *testing.T, kv store.Store) {
 		exists, err := kv.Exists(key, nil)
 		assert.NoError(t, err)
 		assert.True(t, exists)
+=======
+		assert.NoError(t, err, failMsg)
+		if assert.NotNil(t, pair, failMsg) {
+			assert.NotNil(t, pair.Value, failMsg)
+		}
+		assert.Equal(t, pair.Value, value, failMsg)
+		assert.NotEqual(t, pair.LastIndex, 0, failMsg)
+
+		// Exists should return true
+		exists, err := kv.Exists(key, nil)
+		assert.NoError(t, err, failMsg)
+		assert.True(t, exists, failMsg)
+>>>>>>> 778ef57ca9e375763a1a7b15cfe01b119dc3ff1d
 
 		// Delete the key
 		err = kv.Delete(key)
@@ -95,6 +109,7 @@ func testPutGetDeleteExists(t *testing.T, kv store.Store) {
 
 		// Get should fail
 		pair, err = kv.Get(key, nil)
+<<<<<<< HEAD
 		assert.Error(t, err)
 		assert.Nil(t, pair)
 		assert.Nil(t, pair)
@@ -103,6 +118,15 @@ func testPutGetDeleteExists(t *testing.T, kv store.Store) {
 		exists, err = kv.Exists(key, nil)
 		assert.NoError(t, err)
 		assert.False(t, exists)
+=======
+		assert.Error(t, err, failMsg)
+		assert.Nil(t, pair, failMsg)
+
+		// Exists should return false
+		exists, err = kv.Exists(key, nil)
+		assert.NoError(t, err, failMsg)
+		assert.False(t, exists, failMsg)
+>>>>>>> 778ef57ca9e375763a1a7b15cfe01b119dc3ff1d
 	}
 }
 
