@@ -94,26 +94,15 @@ func testPutGetDeleteExists(t *testing.T, kv store.Store) {
 		assert.NoError(t, err)
 
 		// Get should fail
-<<<<<<< HEAD
-		pair, err = kv.Get(key)
+		pair, err = kv.Get(key, nil)
 		assert.Error(t, err)
 		assert.Nil(t, pair)
 		assert.Nil(t, pair)
 
 		// Exists should return false
-		exists, err = kv.Exists(key)
+		exists, err = kv.Exists(key, nil)
 		assert.NoError(t, err)
 		assert.False(t, exists)
-=======
-		pair, err = kv.Get(key, nil)
-		assert.Error(t, err, failMsg)
-		assert.Nil(t, pair, failMsg)
-
-		// Exists should return false
-		exists, err = kv.Exists(key, nil)
-		assert.NoError(t, err, failMsg)
-		assert.False(t, exists, failMsg)
->>>>>>> add read options
 	}
 }
 
