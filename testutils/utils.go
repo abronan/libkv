@@ -503,7 +503,7 @@ func testPutTTL(t *testing.T, kv store.Store, otherConn store.Store) {
 
 func testList(t *testing.T, kv store.Store) {
 	parentKey := "testList"
-	parentValue := []byte("parent")
+	//parentValue := []byte("parent")
 
 	firstKey := "testList/first"
 	firstValue := []byte("first")
@@ -512,7 +512,7 @@ func testList(t *testing.T, kv store.Store) {
 	secondValue := []byte("second")
 
 	// Put the parent key
-	err := kv.Put(parentKey, parentValue, nil)
+	err := kv.Put(parentKey, nil, &store.WriteOptions{IsDir: true})
 	assert.NoError(t, err)
 
 	// Put the first child key
