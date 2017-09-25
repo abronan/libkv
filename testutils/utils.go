@@ -502,7 +502,8 @@ func testPutTTL(t *testing.T, kv store.Store, otherConn store.Store) {
 }
 
 func testList(t *testing.T, kv store.Store) {
-	prefix := "testList"
+	parentKey := "testList"
+	parentValue := []byte("parent")
 
 	firstKey := "testList/first"
 	firstValue := []byte("first")
@@ -510,16 +511,20 @@ func testList(t *testing.T, kv store.Store) {
 	secondKey := "testList/second"
 	secondValue := []byte("second")
 
-	// Put the first key
-	err := kv.Put(firstKey, firstValue, nil)
+	// Put the parent key
+	err := kv.Put(parentKey, parentValue, nil)
 	assert.NoError(t, err)
 
-	// Put the second key
+	// Put the first child key
+	err = kv.Put(firstKey, firstValue, nil)
+	assert.NoError(t, err)
+
+	// Put the second child key
 	err = kv.Put(secondKey, secondValue, nil)
 	assert.NoError(t, err)
 
 	// List should work and return the two correct values
-	for _, parent := range []string{prefix, prefix + "/"} {
+	for _, parent := range []string{parentKey, parentKey + "/"} {
 		pairs, err := kv.List(parent)
 		assert.NoError(t, err)
 		if assert.NotNil(t, pairs) {
