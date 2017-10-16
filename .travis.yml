@@ -12,8 +12,12 @@ before_install:
   - go get github.com/mattn/goveralls
   - go get github.com/golang/lint/golint
   - go get github.com/GeertJohan/fgt
+  - go get -u github.com/golang/dep/cmd/dep
   # ca-certificates is needed for wget to work properly
   - sudo apt-get install ca-certificates
+
+install:
+  - dep ensure
 
 before_script:
   - script/travis_consul.sh 0.9.3
@@ -28,7 +32,7 @@ script:
   - ./redis/src/redis-server &
   - script/validate-gofmt
   - go vet ./...
-  - fgt golint ./...
+  - fgt golint . store testutils
   - go test -v -race ./...
   - script/coverage
   - goveralls -service=travis-ci -coverprofile=goverage.report
